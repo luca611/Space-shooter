@@ -3,7 +3,7 @@ using Raylib_cs;
 using static Raylib_cs.Raylib;
 namespace Space_Shooter;
 
-public class ProjectileUtils
+public abstract class ProjectileUtils
 {
     public static List<Projectile> UpdateProjectiles(List<Projectile> projectiles)
     {

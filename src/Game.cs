@@ -15,13 +15,16 @@ namespace Space_Shooter
             InitWindow(ScreenWidth, ScreenHeight, "Space Shooter");
             SetTargetFPS(60); // ⚠ ️the game speed is based on this value ⚠  ️
             //--------actual game loop-------
-            Player player = new (ScreenWidth / 2, ScreenHeight / 2, 5,100);
+            Player player = new (ScreenWidth / 2, ScreenHeight / 2, 5,100, 20, 20);
+            Enemy enemy = new (ScreenWidth / 2, 50, 2, 20, 20,20,5,2);
             while (!WindowShouldClose())
             {
+                enemy.Update();
                 player.Update();
                 BeginDrawing();
                 ClearBackground(Color.Blue);
                 player.Draw();
+                enemy.Draw();
                 EndDrawing();
             }
 
