@@ -13,6 +13,13 @@ public class Player : Entity
     private List<Projectile> _projectiles = []; 
     public Player(float x, float y, float speed, int initialHealth, float height, float width)
     {
+        if (x < 0 || x > GetScreenWidth()) throw new ArgumentException("X position is out of screen bounds.", nameof(x));
+        if (y < 0 || y > GetScreenHeight()) throw new ArgumentException("Y position is out of screen bounds.", nameof(y));
+        if (speed <= 0) throw new ArgumentException("Speed must be positive.", nameof(speed));
+        if (initialHealth is < 0 or > 100) throw new ArgumentException("Initial health must be between 0 and 100.", nameof(initialHealth));
+        if (width <= 0) throw new ArgumentException("Width must be positive.", nameof(width));
+        if (height <= 0) throw new ArgumentException("Height must be positive.", nameof(height));
+
         _position.X = x;
         _position.Y = y;
         _speed = speed;

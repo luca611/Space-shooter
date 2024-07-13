@@ -21,14 +21,15 @@ public class Enemy : Entity
 
     public Enemy(float posx, float posy, int health,float speed, float sizex, float sizey, int shootCooldown, int level)
     {
-        _position.X = posx;
-        _position.Y = posy;
-        _health = health;
-        _speed = speed;
-        _size.X = sizex;
-        _size.Y = sizey;
-        _shootCooldown = shootCooldown;
-        _level = level;
+        _position.X = (posx >= 0 && posx <= GetScreenWidth()) ? posx : throw new ArgumentException("posx is out of screen bounds.");
+        _position.Y = (posy >= 0 && posy <= GetScreenHeight()) ? posy : throw new ArgumentException("posy is out of screen bounds.");
+
+        _health = health > 0 ? health : throw new ArgumentException("Health must be positive.");
+        _speed = speed > 0 ? speed : throw new ArgumentException("Speed must be positive.");
+        _size.X = sizex > 0 ? sizex : throw new ArgumentException("Size X must be positive.");
+        _size.Y = sizey > 0 ? sizey : throw new ArgumentException("Size Y must be positive.");
+        _shootCooldown = shootCooldown > 0 ? shootCooldown : throw new ArgumentException("Shoot cooldown must be positive.");
+        _level = level > 0 ? level : throw new ArgumentException("Level must be positive.");
     }
 
     public void Draw()

@@ -8,7 +8,7 @@ public class Projectile(Vector2 position, float speed, float damage, bool isFrie
 {
     public void Draw()
     {
-        DrawCircle((int)position.X, (int)position.Y, 5, Color.Red);
+        DrawRectangle((int) position.X, (int) position.Y, 10, 10, isFriendly ? Color.Green : Color.Red);
     }
     
     public void Update()
