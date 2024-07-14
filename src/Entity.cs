@@ -1,6 +1,6 @@
 ﻿namespace Space_Shooter;
 
-public interface Entity
+public interface IEntity
 {
     void Draw();
     void Update();

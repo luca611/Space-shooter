@@ -17,8 +17,16 @@ public abstract class MovementUtils()
     private const KeyboardKey A = KeyboardKey.A;
     private const KeyboardKey D = KeyboardKey.D;
 
-    public static Vector2 UpdatePosition(Vector2 position, Vector2 size,float speed)
+    public static Vector2 UpdatePosition(Vector2 position, Vector2 size, float speed)
     {
+        var isMovingHorizontally = (IsKeyDown(Left) || IsKeyDown(A)) || (IsKeyDown(Right) || IsKeyDown(D));
+        var isMovingVertically = (IsKeyDown(Up) || IsKeyDown(W)) || (IsKeyDown(Down) || IsKeyDown(S));
+        
+        if (isMovingHorizontally && isMovingVertically)
+        {
+            speed /= (float)Math.Sqrt(2);
+        }
+
         if ((IsKeyDown(Left) || IsKeyDown(A)) && position.X - speed >= 0) position.X -= speed;
         if ((IsKeyDown(Right) || IsKeyDown(D)) && position.X + size.X + speed <= ScreenWidth) position.X += speed;
         if ((IsKeyDown(Up) || IsKeyDown(W)) && position.Y - speed >= 0) position.Y -= speed;

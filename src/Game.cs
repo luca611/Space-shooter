@@ -19,8 +19,8 @@ namespace Space_Shooter
             EnemySystem enemySystem;
             try
             {
-                 player = new Player(ScreenWidth / 2, ScreenHeight / 2, 5,100, 20, 20);
-                 enemySystem = new EnemySystem(2, 5, 1);
+                 player = new Player(ScreenWidth / 2, ScreenHeight / 2, 5,100, 20, 20, 0.5, 10);
+                 enemySystem = new EnemySystem(2, 5, 1, player);
             }
             catch (ArgumentException e)
             {
@@ -28,12 +28,15 @@ namespace Space_Shooter
                 throw new ArgumentException(e.Message);
             } 
             
+            var powerUpSystem = new PowerUpSystem(player);
             while (!WindowShouldClose())
             {
+                powerUpSystem.Update();
                 player.Update();
                 enemySystem.Update();
                 BeginDrawing();
                 ClearBackground(Color.Blue);
+                powerUpSystem.Draw();
                 enemySystem.Draw();
                 player.Draw();
                 EndDrawing();

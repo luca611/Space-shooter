@@ -1,26 +1,27 @@
 ﻿using System.Numerics;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
-using System.Numerics;
 
 namespace Space_Shooter;
 
-public class Enemy : Entity
+public class Enemy : IEntity
 {
     private readonly int _level;
-    private double _lastMoveTime = 0;
-    private double _timeSinceLastShot= 0;
+    private double _lastMoveTime;
+    private double _timeSinceLastShot;
     private double _lastShot;
     private readonly int _shootCooldown;
     private int _health;
-    private float _speed;
+    private readonly float _speed;
     private bool _canShoot;
     private Vector2 _position;
     private readonly Vector2 _size;
     private List<Projectile> _projectiles = [];
-
-    public Enemy(float posx, float posy, int health,float speed, float sizex, float sizey, int shootCooldown, int level)
+    private readonly Player _player;
+    
+    public Enemy(float posx, float posy, int health,float speed, float sizex, float sizey, int shootCooldown, int level, Player player)
     {
+        _player = player;
         _position.X = (posx >= 0 && posx <= GetScreenWidth()) ? posx : throw new ArgumentException("posx is out of screen bounds.");
         _position.Y = (posy >= 0 && posy <= GetScreenHeight()) ? posy : throw new ArgumentException("posy is out of screen bounds.");
 
@@ -40,6 +41,7 @@ public class Enemy : Entity
 
     public void Update()
     {
+        HandleCollision(_player);
         _timeSinceLastShot = GetTime() - _lastShot;
         if (_timeSinceLastShot > _shootCooldown) _canShoot = true;
         RandomMove();
@@ -77,8 +79,6 @@ public class Enemy : Entity
     {
         var currentTime = GetTime();
         if (!(currentTime - _lastMoveTime >= 3)) return;
-        float screenWidth = GetScreenWidth();
-        float screenHeight = GetScreenHeight();
 
         var random = new Random();
         var operation = random.Next(0,5);
@@ -86,5 +86,55 @@ public class Enemy : Entity
         _position = MovementUtils.ExecuteProtectedMovement(operation, _position, _size, _speed);
 
         _lastMoveTime = currentTime;
+    }
+    
+    private bool IsHittingPlayer(Player player)
+    {
+        return CollisionCeker.CheckCollision(_position, _size, player.GetPosition(), player.GetSize());
+    }
+    
+    private bool IsHittingProjectile(Projectile projectile)
+    {
+        return CollisionCeker.CheckCollision(_position, _size, projectile.GetPosition(), projectile.GetSize());
+    }
+    
+    private bool IsProjectileHittingPlayer(Player player, Projectile projectile)
+    {
+        return CollisionCeker.CheckCollision(player.GetPosition(), player.GetSize(), projectile.GetPosition(), projectile.GetSize());
+    }
+    
+    private void HandleCollision(Player player)
+    {
+        if (IsHittingPlayer(player))
+        {
+            player.TakeDamage(10);
+            _health = 0;
+        }
+
+        foreach (var projectile in player.GetProjectiles())
+        {
+            if (!IsHittingProjectile(projectile)) continue;
+            TakeDamage(10);
+            player.RemoveProjectile(projectile);
+        }
+
+        for (var index = 0; index < _projectiles.Count; index++)
+        {
+            var projectile = _projectiles[index];
+            if (!IsProjectileHittingPlayer(player, projectile)) continue;
+            player.TakeDamage(10);
+            _projectiles.Remove(projectile);
+        }
+    }
+    
+    public void SpawnPowerUpOnDestruction()
+    {
+        if (!IsDestroyed()) return;
+        var random = new Random();
+        var chance = random.NextDouble(); 
+        if (chance <= 1) 
+        {
+            PowerUpSystem.GeneratePowerUp(_position, _player);
+        }
     }
 }

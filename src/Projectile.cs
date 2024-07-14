@@ -20,4 +20,19 @@ public class Projectile(Vector2 position, float speed, float damage, bool isFrie
     {
         return position.Y is < 0 or > GameWindow.ScreenHeight;
     }
+    
+    public bool IsFriendly()
+    {
+        return isFriendly;
+    }
+    
+    public Vector2 GetPosition()
+    {
+        return position;
+    }
+    
+    public Vector2 GetSize()
+    {
+        return new Vector2(10, 10);
+    }
 }

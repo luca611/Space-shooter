@@ -4,14 +4,17 @@ using static Raylib_cs.Raylib;
 
 namespace Space_Shooter;
 
-public class Player : Entity
+public class Player : IEntity
 {
     private Vector2 _position;
-    private Vector2 _size;
+    private readonly Vector2 _size;
     private float _speed;
     private int _health;
     private List<Projectile> _projectiles = []; 
-    public Player(float x, float y, float speed, int initialHealth, float height, float width)
+    private double _shootCooldown;
+    private double _lastShot;
+    private double _damage;
+    public Player(float x, float y, float speed, int initialHealth, float height, float width, double shootCooldown, double damage)
     {
         if (x < 0 || x > GetScreenWidth()) throw new ArgumentException("X position is out of screen bounds.", nameof(x));
         if (y < 0 || y > GetScreenHeight()) throw new ArgumentException("Y position is out of screen bounds.", nameof(y));
@@ -24,6 +27,8 @@ public class Player : Entity
         _position.Y = y;
         _speed = speed;
         _health = initialHealth;
+        _shootCooldown = shootCooldown;
+        _damage = damage;
         _size.X = width;
         _size.Y = height;
     }
@@ -42,9 +47,11 @@ public class Player : Entity
 
     public void Shoot()
     {
-        if (!IsMouseButtonPressed(MouseButton.Left)) return;
-        
-        _projectiles.Add(new Projectile(new Vector2(_position.X+(_size.X/2),_position.Y), 5, 10, true));
+        var currentTime = GetTime(); // Assuming GetTime() returns the current time in seconds or a similar unit
+        if (!IsMouseButtonDown(MouseButton.Left) || currentTime - _lastShot < _shootCooldown) return;
+    
+        _projectiles.Add(new Projectile(new Vector2(_position.X + (_size.X / 2), _position.Y), 5, 10, true));
+        _lastShot = currentTime; // Update the last shot time
     }
 
     public void TakeDamage(int damage)
@@ -58,11 +65,45 @@ public class Player : Entity
         _health += healthPoints;
         if (_health > 100) _health = 100; 
     }
+    
+    public void IncreaseSpeed(int amount)
+    {
+        _position.X += amount;
+    }
+    
+    public void IncreaseShootingSpeed(double amount)
+    {
+        _shootCooldown -= amount;
+        if (_shootCooldown < 0) _shootCooldown = 0;
+    }
+    
+    public void IncreaseDamage(double amount)
+    {
+        _damage += amount;
+    }
 
     public bool IsDestroyed()
     {
         return _health <= 0; 
     }
     
+    public Vector2 GetPosition()
+    {
+        return _position;
+    }
     
+    public Vector2 GetSize()
+    {
+        return _size;
+    }
+    
+    public Projectile[] GetProjectiles()
+    {
+        return _projectiles.ToArray();
+    }
+
+    public void RemoveProjectile(Projectile projectile)
+    {
+        _projectiles.Remove(projectile);
+    }
 }
