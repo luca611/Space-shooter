@@ -6,6 +6,13 @@ using static Raylib;
 
 public class EnemySystem
 {
+    private static readonly Texture2D Enemy1 = LoadTexture("./assets/enemy.png");
+    private static readonly Texture2D Enemy2 = LoadTexture("./assets/enemy2.png");
+    private static readonly Texture2D Enemy3 = LoadTexture("./assets/enemy3.png");
+    
+    public static readonly Texture2D[] EnemyTextures = [Enemy1, Enemy2, Enemy3];
+    public static readonly Texture2D SpawnAnimation = LoadTexture("./assets/spawn.png");
+    
     private int _spawnTimer;
     private readonly int _maxEnemies;
     private int _difficulty;
@@ -71,8 +78,8 @@ public class EnemySystem
         var health = 100 + (10 * difficulty); 
         var speed = 1 + (0.1f * difficulty);
         //WILL BE ADJUSTED TO TEXTURES
-        var sizeX = 20; 
-        var sizeY = 20;
+        var sizeX = 48; 
+        var sizeY = 48;
         var shootCooldown = 5 - difficulty;
         if (shootCooldown < 1) shootCooldown = 1; 
 
@@ -80,7 +87,7 @@ public class EnemySystem
         float posX = random.Next(0, GetScreenWidth() - (int)sizeX);
         float posY = random.Next(0, GetScreenHeight()/2 - (int)sizeY);
 
-        var enemy = new Enemy(posX, posY, health, speed, sizeX, sizeY, shootCooldown, difficulty, _player);
+        var enemy = new Enemy(posX, posY, health, speed, sizeX, sizeY, shootCooldown, difficulty, _player, EnemyTextures[random.Next(0, 3)]);
 
         return enemy;
     }

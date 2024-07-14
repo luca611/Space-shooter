@@ -19,7 +19,18 @@ public class Enemy : IEntity
     private List<Projectile> _projectiles = [];
     private readonly Player _player;
     
-    public Enemy(float posx, float posy, int health,float speed, float sizex, float sizey, int shootCooldown, int level, Player player)
+    private Texture2D _texture;
+    private int _frames;
+    private int CurrentFrame;
+    private const int FrameWidth = 16; 
+    private const float FrameDuration = 0.2f; 
+    private float _timer = 0f;
+    
+    private bool _isSpawning = true;
+    private bool _isShot = false;
+
+    
+    public Enemy(float posx, float posy, int health,float speed, float sizex, float sizey, int shootCooldown, int level, Player player,Texture2D texture)
     {
         _player = player;
         _position.X = (posx >= 0 && posx <= GetScreenWidth()) ? posx : throw new ArgumentException("posx is out of screen bounds.");
@@ -31,16 +42,40 @@ public class Enemy : IEntity
         _size.Y = sizey > 0 ? sizey : throw new ArgumentException("Size Y must be positive.");
         _shootCooldown = shootCooldown > 0 ? shootCooldown : throw new ArgumentException("Shoot cooldown must be positive.");
         _level = level > 0 ? level : throw new ArgumentException("Level must be positive.");
+        _texture = texture;
+        _frames = _texture.Width / FrameWidth;
     }
 
     public void Draw()
     {
-        DrawRectangle((int)_position.X, (int)_position.Y, (int)_size.X, (int)_size.Y, Color.Red);
+        
+        var sourceRect = new Rectangle(0, 0, FrameWidth, _texture.Height);
+        var destRect = new Rectangle(_position.X, _position.Y, FrameWidth * 3, _texture.Height * 3);
+        Vector2 origin = new Vector2(0, 0);
+        float rotation = 0.0f;
+        
+        if(_isSpawning){
+            _isSpawning = !DrawAnimation(EnemySystem.SpawnAnimation);
+            DrawTexturePro(_texture, sourceRect, destRect, origin, rotation, Color.White);
+            return;
+        }
+
+        if (_isShot)
+        {
+            _isShot = !DrawAnimation(_texture);
+            ProjectileUtils.DrawProjectiles(_projectiles);
+            return;
+        }
+        
+        DrawTexturePro(_texture, sourceRect, destRect, origin, rotation, Color.White);
+        ClearAnimationVariables();
         ProjectileUtils.DrawProjectiles(_projectiles);
     }
 
     public void Update()
     {
+        if (_isSpawning) return;
+        if (_isShot) return;
         HandleCollision(_player);
         _timeSinceLastShot = GetTime() - _lastShot;
         if (_timeSinceLastShot > _shootCooldown) _canShoot = true;
@@ -60,6 +95,7 @@ public class Enemy : IEntity
 
     public void TakeDamage(int damage)
     {
+        _isShot = true;
         _health -= damage;
         if (_health < 0) _health = 0;
     }
@@ -137,4 +173,33 @@ public class Enemy : IEntity
             PowerUpSystem.GeneratePowerUp(_position, _player);
         }
     }
+    
+    private bool DrawAnimation(Texture2D texture)
+    {
+        var totalFrames = texture.Width / FrameWidth;
+        _timer += GetFrameTime();
+
+        if (_timer >= FrameDuration)
+        {
+            CurrentFrame = (CurrentFrame + 1) % totalFrames;
+            _timer = 0f;
+        }
+
+        var frameX = CurrentFrame * FrameWidth;
+        if(CurrentFrame == totalFrames - 1) return true;
+
+        var sourceRect = new Rectangle(frameX, 0, FrameWidth, texture.Height);
+        var destRect = new Rectangle(_position.X, _position.Y, FrameWidth * 3, texture.Height * 3);
+        var origin = new Vector2(0, 0);
+        var rotation = 0.0f;
+        DrawTexturePro(texture, sourceRect, destRect, origin, rotation, Color.White);
+        return false;
+    }
+    
+    private void ClearAnimationVariables()
+    {
+        _timer = 0f;
+        CurrentFrame = 0;
+    }
+    
 }
