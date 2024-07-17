@@ -14,7 +14,16 @@ public class Player : IEntity
     private double _shootCooldown;
     private double _lastShot;
     private double _damage;
-    public Player(float x, float y, float speed, int initialHealth, float height, float width, double shootCooldown, double damage)
+    
+    private readonly Texture2D _texture;
+    private int _currentFrame;
+    private const int FrameWidth = 16; 
+    private const float FrameDuration = 0.1f; 
+    private float _timer;
+    
+    private Texture2D _projectileTexture = LoadTexture("./assets/projectile.png");
+    
+    public Player(float x, float y, float speed, int initialHealth, float height, float width, double shootCooldown, double damage, Texture2D texture)
     {
         if (x < 0 || x > GetScreenWidth()) throw new ArgumentException("X position is out of screen bounds.", nameof(x));
         if (y < 0 || y > GetScreenHeight()) throw new ArgumentException("Y position is out of screen bounds.", nameof(y));
@@ -29,19 +38,25 @@ public class Player : IEntity
         _health = initialHealth;
         _shootCooldown = shootCooldown;
         _damage = damage;
+        _texture = texture;
         _size.X = width;
         _size.Y = height;
     }
     public void Draw()
     {
-        DrawRectangle((int)_position.X, (int)_position.Y, (int)_size.X, (int)_size.Y, Color.Red);
+        var sourceRect = new Rectangle(0 + FrameWidth *_currentFrame, 0, FrameWidth, _texture.Height);
+        var destRect = new Rectangle(_position.X, _position.Y, FrameWidth * 3, _texture.Height * 3);
+        var origin = new Vector2(0, 0);
+        var rotation = 0.0f;
+        
+        DrawTexturePro(_texture, sourceRect, destRect, origin, rotation, Color.White);
         ProjectileUtils.DrawProjectiles(_projectiles);
     }
 
     public void Update()
     {
         Shoot();
-        _position = MovementUtils.UpdatePosition(_position,_size, _speed);
+        _position = MovementUtils.UpdatePosition(_position,_size, _speed, this);
         _projectiles = ProjectileUtils.UpdateProjectiles(_projectiles);
     }
 
@@ -50,7 +65,7 @@ public class Player : IEntity
         var currentTime = GetTime(); // Assuming GetTime() returns the current time in seconds or a similar unit
         if (!IsMouseButtonDown(MouseButton.Left) || currentTime - _lastShot < _shootCooldown) return;
     
-        _projectiles.Add(new Projectile(new Vector2(_position.X + (_size.X / 2), _position.Y), 5, 10, true));
+        _projectiles.Add(new Projectile(new Vector2(_position.X , _position.Y), 5, 10, true,_projectileTexture));
         _lastShot = currentTime; // Update the last shot time
     }
 
@@ -105,5 +120,10 @@ public class Player : IEntity
     public void RemoveProjectile(Projectile projectile)
     {
         _projectiles.Remove(projectile);
+    }
+    
+    public void SetCurrentFrame(int frame)
+    {
+        _currentFrame = frame;
     }
 }

@@ -4,11 +4,29 @@ using static Raylib_cs.Raylib;
 
 namespace Space_Shooter;
 
-public class Projectile(Vector2 position, float speed, float damage, bool isFriendly)
+public class Projectile(Vector2 position, float speed, float damage, bool isFriendly, Texture2D texture)
 {
+    private int _currentFrame;
+    private float _frameTimer;
+    private const float FrameDuration = 0.2f;
+    private const int FrameWidth = 16;
+    private const int ScaleFactor = 3;
+    
     public void Draw()
     {
-        DrawRectangle((int) position.X, (int) position.Y, 10, 10, isFriendly ? Color.Green : Color.Red);
+        _frameTimer += GetFrameTime(); // Increment the timer by the elapsed time
+
+        if (_frameTimer >= FrameDuration)
+        {
+            _currentFrame++;
+            _frameTimer = 0f; 
+        }
+
+        var totalFrames = texture.Width / FrameWidth;
+        if (_currentFrame >= totalFrames) _currentFrame = 0; 
+        var sourceRect = new Rectangle(_currentFrame * FrameWidth, 0, FrameWidth, texture.Height);
+        var destRect = new Rectangle(position.X, position.Y, FrameWidth * ScaleFactor, texture.Height * ScaleFactor);
+        DrawTexturePro(texture, sourceRect, destRect, new Vector2(0, 0), 0f, Color.White);
     }
     
     public void Update()
@@ -33,6 +51,6 @@ public class Projectile(Vector2 position, float speed, float damage, bool isFrie
     
     public Vector2 GetSize()
     {
-        return new Vector2(10, 10);
+        return new Vector2(48, 48);
     }
 }

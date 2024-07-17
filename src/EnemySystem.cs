@@ -77,7 +77,6 @@ public class EnemySystem
     {
         var health = 100 + (10 * difficulty); 
         var speed = 1 + (0.1f * difficulty);
-        //WILL BE ADJUSTED TO TEXTURES
         var sizeX = 48; 
         var sizeY = 48;
         var shootCooldown = 5 - difficulty;

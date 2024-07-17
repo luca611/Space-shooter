@@ -19,7 +19,7 @@ namespace Space_Shooter
             EnemySystem enemySystem;
             try
             {
-                 player = new Player(ScreenWidth / 2, ScreenHeight / 2, 5,100, 20, 20, 0.5, 10);
+                 player = new Player(ScreenWidth / 2, ScreenHeight / 2, 5,100, 48, 48, 0.5, 10, LoadTexture("./assets/ship.png"));
                  enemySystem = new EnemySystem(2, 5, 1, player);
             }
             catch (ArgumentException e)
