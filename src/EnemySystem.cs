@@ -19,7 +19,8 @@ public class EnemySystem
     private double _lastDifficultyIncreaseTime;
     private double _lastSpawnTime;
     private Player _player;
-
+    private int _killCount;
+    
     private List<Enemy> _enemies = [];
     
     public EnemySystem(int spawnTimer, int maxEnemies, int difficulty, Player player)
@@ -65,12 +66,14 @@ public class EnemySystem
             if (!_enemies[i].IsDestroyed()) continue;
             _enemies[i].SpawnPowerUpOnDestruction();
             _enemies.RemoveAt(i);
+            _killCount++;
         }
     }
 
     public void Draw()
     {
         foreach (var enemy in _enemies) enemy.Draw();
+        UiManager.DrawKills(_killCount);
     }
 
     private Enemy CreateEnemyBasedOnDifficulty(int difficulty)
@@ -90,4 +93,14 @@ public class EnemySystem
 
         return enemy;
     }
+    
+    public void Reset()
+    {
+        _enemies = [];
+        _killCount = 0;
+        _difficulty = 1;
+        _lastDifficultyIncreaseTime = GetTime();
+        _lastSpawnTime = GetTime();
+    }
+
 }

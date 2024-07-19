@@ -51,6 +51,7 @@ public class Player : IEntity
         
         DrawTexturePro(_texture, sourceRect, destRect, origin, rotation, Color.White);
         ProjectileUtils.DrawProjectiles(_projectiles);
+        UiManager.DrawLives(_health/20);
     }
 
     public void Update()
@@ -125,5 +126,20 @@ public class Player : IEntity
     public void SetCurrentFrame(int frame)
     {
         _currentFrame = frame;
+    }
+    
+    public void Reset()
+    {
+        _position = new Vector2(GetScreenWidth() / 2, GetScreenHeight() - 100);
+        _health = 100;
+        _projectiles = [];
+        _speed = 5;
+        _shootCooldown = 0.5;
+        _damage = 10;
+    }
+    
+    public bool IsDead()
+    {
+        return _health <= 0;
     }
 }

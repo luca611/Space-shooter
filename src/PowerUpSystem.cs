@@ -28,7 +28,7 @@ public class PowerUpSystem
     public static void GeneratePowerUp(Vector2 position, Player _player)
     {
         var random = new Random();
-        var type = random.Next(0, 5);
+        var type = random.Next(0, 4);
         var powerUp = new PowerUp(position.X, position.Y, type, _player);
         _powerUps.Add(powerUp);
     }

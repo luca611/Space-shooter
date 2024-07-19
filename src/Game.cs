@@ -31,15 +31,29 @@ namespace Space_Shooter
             var powerUpSystem = new PowerUpSystem(player);
             while (!WindowShouldClose())
             {
-                powerUpSystem.Update();
-                player.Update();
-                enemySystem.Update();
-                BeginDrawing();
-                ClearBackground(Color.Blue);
-                powerUpSystem.Draw();
-                enemySystem.Draw();
-                player.Draw();
-                EndDrawing();
+                if (!player.IsDead())
+                {
+                    powerUpSystem.Update();
+                    player.Update();
+                    enemySystem.Update();
+                    BeginDrawing();
+                    ClearBackground(Color.Blue);
+                    UiManager.DrawBackground();
+                    powerUpSystem.Draw();
+                    enemySystem.Draw();
+                    player.Draw();
+                    EndDrawing();
+                }
+                else
+                {
+                    UiManager.DrawGameOver();
+                    if (IsKeyPressed(KeyboardKey.Enter))
+                    {
+                        player.Reset();
+                        enemySystem.Reset();
+                    }
+                    
+                }
             }
 
             CloseWindow();
