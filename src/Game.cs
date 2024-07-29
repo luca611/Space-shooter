@@ -46,7 +46,10 @@ namespace Space_Shooter
                 }
                 else
                 {
+                    BeginDrawing();
+                    ClearBackground(Color.Black);
                     UiManager.DrawGameOver();
+                    EndDrawing();
                     if (IsKeyPressed(KeyboardKey.Enter))
                     {
                         player.Reset();

@@ -5,7 +5,10 @@ namespace Space_Shooter;
 
 using static Raylib;
 
-public abstract class MovementUtils()
+/// <summary>
+/// Provides utility methods for handling movement logic in the game.
+/// </summary>
+public abstract class MovementUtils
 {
     private const float ScreenWidth = GameWindow.ScreenWidth;
     private const float ScreenHeight = GameWindow.ScreenHeight;
@@ -19,6 +22,14 @@ public abstract class MovementUtils()
     private const KeyboardKey A = KeyboardKey.A;
     private const KeyboardKey D = KeyboardKey.D;
 
+    /// <summary>
+    /// Updates the position of the player based on keyboard input.
+    /// </summary>
+    /// <param name="position">The current position of the player.</param>
+    /// <param name="size">The size of the player.</param>
+    /// <param name="speed">The speed of the player.</param>
+    /// <param name="player">The player object.</param>
+    /// <returns>The updated position of the player.</returns>
     public static Vector2 UpdatePosition(Vector2 position, Vector2 size, float speed, Player player)
     {
         bool movingHorizontally = false;
@@ -41,8 +52,7 @@ public abstract class MovementUtils()
 
         if ((IsKeyDown(Up) || IsKeyDown(W)) && position.Y - speed >= 0)
         {
-            position.Y -=
-                movingHorizontally ? diagonalSpeed : speed; // Use diagonalSpeed if moving horizontally as well
+            position.Y -= movingHorizontally ? diagonalSpeed : speed; // Use diagonalSpeed if moving horizontally as well
             if (!movingHorizontally)
             {
                 player.SetCurrentFrame(1);
@@ -53,8 +63,7 @@ public abstract class MovementUtils()
 
         if ((IsKeyDown(Down) || IsKeyDown(S)) && position.Y + size.Y + speed <= ScreenHeight)
         {
-            position.Y +=
-                movingHorizontally ? diagonalSpeed : speed; // Use diagonalSpeed if moving horizontally as well
+            position.Y += movingHorizontally ? diagonalSpeed : speed; // Use diagonalSpeed if moving horizontally as well
             if (!movingHorizontally)
             {
                 player.SetCurrentFrame(1);
@@ -72,54 +81,112 @@ public abstract class MovementUtils()
         return position;
     }
 
+    /// <summary>
+    /// Moves the position upwards by a specified speed.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoUp(Vector2 position, float speed)
     {
         position.Y -= speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position downwards by a specified speed.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoDown(Vector2 position, float speed)
     {
         position.Y += speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position to the left by a specified speed.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoLeft(Vector2 position, float speed)
     {
         position.X -= speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position to the right by a specified speed.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoRight(Vector2 position, float speed)
     {
         position.X += speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position upwards by a specified speed, ensuring it stays within screen bounds.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoUpProtected(Vector2 position, float speed)
     {
         if (position.Y - speed >= 0) position.Y -= speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position downwards by a specified speed, ensuring it stays within screen bounds.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="size">The size of the entity being moved.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoDownProtected(Vector2 position, Vector2 size, float speed)
     {
         if (position.Y + size.Y + speed <= ScreenHeight) position.Y += speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position to the left by a specified speed, ensuring it stays within screen bounds.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoLeftProtected(Vector2 position, float speed)
     {
         if (position.X - speed >= 0) position.X -= speed;
         return position;
     }
 
+    /// <summary>
+    /// Moves the position to the right by a specified speed, ensuring it stays within screen bounds.
+    /// </summary>
+    /// <param name="position">The current position.</param>
+    /// <param name="size">The size of the entity being moved.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position.</returns>
     public static Vector2 GoRightProtected(Vector2 position, Vector2 size, float speed)
     {
         if (position.X + size.X + speed <= ScreenWidth) position.X += speed;
         return position;
     }
 
+    /// <summary>
+    /// Executes a movement operation based on the given operation code, ensuring the movement stays within screen bounds.
+    /// </summary>
+    /// <param name="operation">The operation code indicating the direction of movement (1: Up, 2: Down, 3: Right, 4: Left).</param>
+    /// <param name="position">The current position.</param>
+    /// <param name="size">The size of the entity being moved.</param>
+    /// <param name="speed">The speed of movement.</param>
+    /// <returns>The updated position after executing the movement operation.</returns>
     public static Vector2 ExecuteProtectedMovement(int operation, Vector2 position, Vector2 size, float speed)
     {
         return operation switch
