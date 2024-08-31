@@ -1,4 +1,14 @@
-Galactic Defenders
+# Galactic Defenders
+
+## Play it here:
+https://luiis71.itch.io/space-shooter
+
+## Some screenshot
+
+![image](https://github.com/user-attachments/assets/a1f83804-14d7-48ab-8365-6f7b6be364ec)
+![image](https://github.com/user-attachments/assets/7232c56a-3a58-4abf-bd43-37b2b92af0e0)
+
+## Description
 Galactic Defenders is a high-octane space shooter where players dive into intense, fast-paced action to protect Earth from relentless waves of alien invaders. With straightforward controls and addictive gameplay, this game offers a thrilling experience as you navigate the void of space, obliterate enemies, and gather powerful upgrades.
 
 Key Features:
